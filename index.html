@@ -3,1277 +3,1992 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoP2P Exchange | El Exchange Seguro en Discord</title>
-    <meta name="description" content="El exchange P2P más seguro y rápido de Discord. Sin custodia, con sistema de reputación y soporte 24/7.">
+    <title>ZYNEX | Premium Crypto Exchange Platform</title>
+    <meta name="description" content="Plataforma P2P segura con supervisión 24/7. Comisión transparente del 5%. Sin custodia de fondos.">
     
-    <!-- Fuentes e Iconos -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
+        /* ========================================
+           CONFIGURACIÓN GENERAL Y VARIABLES
+           ======================================== */
         :root {
-            --bg-color: #0f1115;
-            --bg-secondary: #161920;
-            --card-bg: #181b21;
-            --primary: #5865F2;
-            --primary-hover: #4752c4;
-            --accent: #00ffa3;
-            --accent-hover: #00cc82;
-            --text-main: #ffffff;
-            --text-sec: #a1a1aa;
-            --danger: #ff4757;
-            --warning: #ffa502;
-            --success: #2ed573;
-            --border: #2a2d35;
+            --bg-primary: #030305;
+            --bg-secondary: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6a6a7a;
+            --accent-primary: #00f2ea;
+            --accent-secondary: #7000ff;
+            --accent-gradient: linear-gradient(135deg, #00f2ea 0%, #7000ff 100%);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(0, 242, 234, 0.3);
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --error: #ff4466;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Orbitron', monospace;
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-glow: 0 0 40px rgba(0, 242, 234, 0.15);
+            --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
+        /* ========================================
+           RESET Y BASE
+           ======================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+        }
+
+        html {
             scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* --- Header / Nav --- */
+        /* Tipografías */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+        /* ========================================
+           FONDO ANIMADO
+           ======================================== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 242, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.8) 0%, var(--bg-primary) 100%);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 234, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 234, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ========================================
+           HEADER & NAVEGACIÓN
+           ======================================== */
         header {
-            padding: 20px 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            background: rgba(15, 17, 21, 0.95);
-            backdrop-filter: blur(10px);
             z-index: 1000;
+            background: rgba(3, 3, 5, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all var(--transition-medium);
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--text-main);
+        header.scrolled {
+            padding: 15px 50px;
+            background: rgba(3, 3, 5, 0.95);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .logo i { color: var(--primary); }
-        .logo span { color: var(--accent); }
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.4);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #fff 0%, var(--accent-primary) 50%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
 
         nav ul {
             display: flex;
             list-style: none;
-            gap: 30px;
+            gap: 35px;
         }
 
         nav a {
-            color: var(--text-sec);
+            color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
-            transition: 0.3s;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all var(--transition-fast);
+            position: relative;
+            padding: 5px 0;
         }
 
-        nav a:hover { color: var(--accent); }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: width var(--transition-medium);
+        }
 
-        .btn-discord {
-            background-color: var(--primary);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            text-decoration: none;
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 12px 30px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 30px;
+            color: #000;
             font-weight: 600;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-discord:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        .mobile-menu {
-            display: none;
-            font-size: 1.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
+            transition: all var(--transition-medium);
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.3);
         }
 
-        /* --- Hero Section --- */
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 242, 234, 0.5);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-menu-btn span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
         .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            padding: 150px 20px 100px 20px;
-            background: radial-gradient(circle at center, #1e2330 0%, #0f1115 70%);
+            padding: 150px 20px 80px;
             position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: var(--primary);
-            filter: blur(150px);
-            opacity: 0.2;
-            top: -100px;
-            left: -100px;
-            border-radius: 50%;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: var(--accent);
-            filter: blur(150px);
-            opacity: 0.15;
-            bottom: -100px;
-            right: -100px;
-            border-radius: 50%;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
         }
 
         .hero-badge {
-            display: inline-block;
-            background: rgba(0, 255, 163, 0.1);
-            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            border: 1px solid rgba(0, 255, 163, 0.3);
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
             line-height: 1.1;
+            margin-bottom: 25px;
+            animation: fadeInUp 1s ease 0.2s backwards;
         }
 
-        .hero h1 span {
-            color: var(--accent);
-            text-shadow: 0 0 30px rgba(0, 255, 163, 0.4);
+        .hero h1 .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            color: var(--text-sec);
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 2vw, 1.3rem);
             max-width: 700px;
-            margin: 0 auto 40px auto;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.4s backwards;
         }
 
-        .cta-container {
+        .hero-buttons {
             display: flex;
-            justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.6s backwards;
         }
 
-        .btn-large {
-            padding: 15px 40px;
-            font-size: 1.1rem;
+        .btn-primary {
+            padding: 16px 40px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 35px;
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            text-decoration: none;
+            box-shadow: 0 0 30px rgba(0, 242, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 242, 234, 0.6);
         }
 
         .btn-secondary {
+            padding: 16px 40px;
             background: transparent;
-            border: 2px solid var(--border);
-            color: var(--text-main);
+            border: 2px solid var(--glass-border);
+            border-radius: 35px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            text-decoration: none;
         }
 
         .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+            border-color: var(--accent-primary);
+            background: rgba(0, 242, 234, 0.1);
+            transform: translateY(-3px);
         }
 
-        /* --- Stats Section --- */
-        .stats {
+        .hero-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 30px;
-            padding: 60px 5%;
-            background: var(--bg-secondary);
-            margin: 0 5%;
-            border-radius: 20px;
-            margin-top: -50px;
-            position: relative;
-            z-index: 2;
+            margin-top: 80px;
+            width: 100%;
+            max-width: 1000px;
+            animation: fadeInUp 1s ease 0.8s backwards;
         }
 
-        .stat-item {
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            padding: 25px 20px;
+            border-radius: 20px;
             text-align: center;
-            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-medium);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
         }
 
         .stat-number {
+            font-family: var(--font-display);
             font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--accent);
+            font-weight: 700;
+            color: var(--accent-primary);
             display: block;
+            margin-bottom: 5px;
         }
 
         .stat-label {
-            color: var(--text-sec);
-            font-size: 0.9rem;
-            margin-top: 5px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* --- Features Section --- */
-        .section-title {
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--accent-primary);
+            opacity: 0.7;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           SECCIONES GENERALES
+           ======================================== */
+        section {
+            padding: 120px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
             text-align: center;
-            padding: 80px 20px 40px 20px;
+            margin-bottom: 80px;
         }
 
-        .section-title h2 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+        .section-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(0, 242, 234, 0.1);
+            border: 1px solid rgba(0, 242, 234, 0.3);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
         }
 
-        .section-title p {
-            color: var(--text-sec);
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto;
         }
 
-        .features {
-            padding: 0 5% 80px 5%;
+        /* ========================================
+           CALCULADORA DE COMISIONES
+           ======================================== */
+        .calculator-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 242, 234, 0.03) 50%, transparent 100%);
+        }
+
+        .calculator-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .calculator-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .calculator-header h3 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .calculator-header p {
+            color: var(--text-secondary);
+        }
+
+        .calculator-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .calculator-input-group {
+            margin-bottom: 25px;
+        }
+
+        .calculator-input-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 18px 20px;
+            padding-right: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-family: var(--font-display);
+            transition: all var(--transition-fast);
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.2);
+        }
+
+        .input-wrapper .currency {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-family: var(--font-display);
+        }
+
+        .calculator-results {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 2px solid var(--accent-primary);
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .result-value {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-value.highlight {
+            color: var(--accent-primary);
+            font-size: 1.6rem;
+        }
+
+        .result-value.final {
+            color: var(--success);
+            font-size: 1.8rem;
+        }
+
+        .calculator-note {
+            margin-top: 25px;
+            padding: 15px 20px;
+            background: rgba(0, 242, 234, 0.05);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           CÓMO FUNCIONA
+           ======================================== */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
         }
 
-        .card {
-            background: var(--card-bg);
-            padding: 35px;
-            border-radius: 15px;
-            border: 1px solid var(--border);
-            transition: 0.3s;
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all var(--transition-medium);
+            position: relative;
+            overflow: hidden;
         }
 
-        .card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(88, 101, 242, 0.1);
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: transform var(--transition-medium);
         }
 
-        .card i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            display: inline-block;
-            padding: 15px;
-            background: rgba(88, 101, 242, 0.1);
-            border-radius: 12px;
+        .step-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--glass-border-hover);
+            box-shadow: var(--shadow-glow);
         }
 
-        .card h3 {
-            margin-bottom: 15px;
+        .step-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #000;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.4);
+        }
+
+        .step-card h4 {
+            font-family: var(--font-display);
             font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-primary);
         }
 
-        .card p {
-            color: var(--text-sec);
+        .step-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           CARACTERÍSTICAS
+           ======================================== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 35px;
+            transition: all var(--transition-medium);
+            position: relative;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 242, 234, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            transition: all var(--transition-medium);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--accent-gradient);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h4 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.7;
         }
 
-        .card ul {
-            list-style: none;
-            margin-top: 15px;
+        /* ========================================
+           COMPARATIVA
+           ======================================== */
+        .comparison-table {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            overflow: hidden;
         }
 
-        .card ul li {
-            color: var(--text-sec);
-            padding: 8px 0;
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 25px 30px;
+            background: rgba(0, 242, 234, 0.05);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .comparison-header div {
+            font-family: var(--font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .comparison-header div:last-child {
+            color: var(--accent-primary);
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--glass-border);
+            transition: background var(--transition-fast);
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .comparison-row div {
             display: flex;
             align-items: center;
-            gap: 10px;
+            font-size: 0.95rem;
         }
 
-        .card ul li i {
-            font-size: 0.8rem;
-            color: var(--success);
-            padding: 0;
-            background: none;
+        .comparison-row div:first-child {
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
-        /* --- How it Works --- */
-        .steps {
-            padding: 80px 5%;
-            background: var(--bg-secondary);
-        }
-
-        .steps-container {
-            display: flex;
+        .comparison-row div:not(:first-child) {
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
+            color: var(--text-secondary);
         }
 
-        .step-item {
-            flex: 1;
-            min-width: 250px;
-            max-width: 300px;
-            text-align: center;
-            position: relative;
+        .comparison-row.zynex-highlight {
+            background: rgba(0, 242, 234, 0.05);
         }
 
-        .step-item:not(:last-child)::after {
-            content: '→';
-            position: absolute;
-            right: -30px;
-            top: 30px;
-            font-size: 2rem;
-            color: var(--border);
+        .comparison-row.zynex-highlight div:not(:first-child) {
+            color: var(--accent-primary);
+            font-weight: 600;
         }
 
-        .step-number {
-            background: var(--card-bg);
-            width: 70px;
-            height: 70px;
+        .check { color: var(--success); font-weight: bold; }
+        .cross { color: var(--error); font-weight: bold; }
+
+        /* ========================================
+           TESTIMONIOS
+           ======================================== */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 35px;
+            transition: all var(--transition-medium);
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--glass-border-hover);
+            transform: translateY(-5px);
+        }
+
+        .testimonial-stars {
+            color: #ffaa00;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 25px auto;
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: var(--accent);
-            border: 3px solid var(--accent);
-            box-shadow: 0 0 20px rgba(0, 255, 163, 0.3);
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: #000;
         }
 
-        .step-item h3 {
-            margin-bottom: 15px;
-            font-size: 1.2rem;
+        .testimonial-info h5 {
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 3px;
         }
 
-        .step-item p {
-            color: var(--text-sec);
-            font-size: 0.9rem;
-        }
-
-        /* --- Supported Crypto --- */
-        .crypto-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            padding: 60px 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .crypto-item {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-        }
-
-        .crypto-item:hover {
-            border-color: var(--accent);
-            transform: scale(1.05);
-        }
-
-        .crypto-item i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .crypto-item .btc { color: #f7931a; }
-        .crypto-item .eth { color: #627eea; }
-        .crypto-item .usdt { color: #26a17b; }
-        .crypto-item .bnb { color: #f0b90b; }
-        .crypto-item .sol { color: #9945ff; }
-        .crypto-item .ada { color: #0033ad; }
-
-        .crypto-item h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .crypto-item span {
-            color: var(--text-sec);
+        .testimonial-info span {
+            color: var(--text-muted);
             font-size: 0.85rem;
         }
 
-        /* --- Security Section --- */
-        .security {
-            padding: 80px 5%;
-            background: linear-gradient(135deg, rgba(255, 71, 87, 0.05) 0%, rgba(15, 17, 21, 0) 100%);
-        }
-
-        .security-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 40px auto 0 auto;
-        }
-
-        .security-card {
-            background: rgba(255, 71, 87, 0.05);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            padding: 30px;
-            border-radius: 15px;
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
-
-        .security-card i {
-            font-size: 2rem;
-            color: var(--danger);
-            flex-shrink: 0;
-        }
-
-        .security-card h4 {
-            color: var(--danger);
-            margin-bottom: 10px;
-        }
-
-        .security-card p {
-            color: var(--text-sec);
-            font-size: 0.9rem;
-        }
-
-        /* --- Payment Methods --- */
-        .payment-methods {
-            padding: 80px 5%;
-            background: var(--bg-secondary);
-        }
-
-        .payment-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 40px auto 0 auto;
-        }
-
-        .payment-item {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .payment-item i {
-            font-size: 2rem;
-            color: var(--success);
-            margin-bottom: 15px;
-        }
-
-        .payment-item h4 {
-            font-size: 1rem;
-        }
-
-        /* --- Reputation System --- */
-        .reputation {
-            padding: 80px 5%;
-        }
-
-        .reputation-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 50px;
-            border: 1px solid var(--border);
-        }
-
-        .reputation-levels {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .level {
-            text-align: center;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-radius: 15px;
-            min-width: 150px;
-            border: 2px solid var(--border);
-        }
-
-        .level.bronze { border-color: #cd7f32; }
-        .level.silver { border-color: #c0c0c0; }
-        .level.gold { border-color: #ffd700; }
-        .level.platinum { border-color: var(--accent); }
-
-        .level i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .level.bronze i { color: #cd7f32; }
-        .level.silver i { color: #c0c0c0; }
-        .level.gold i { color: #ffd700; }
-        .level.platinum i { color: var(--accent); }
-
-        .level h4 { margin-bottom: 5px; }
-        .level p { color: var(--text-sec); font-size: 0.85rem; }
-
-        /* --- FAQ Section --- */
-        .faq {
-            padding: 80px 5%;
-            background: var(--bg-secondary);
-        }
-
+        /* ========================================
+           FAQ
+           ======================================== */
         .faq-container {
             max-width: 800px;
-            margin: 40px auto 0 auto;
+            margin: 0 auto;
         }
 
         .faq-item {
-            background: var(--card-bg);
-            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
             margin-bottom: 15px;
-            border: 1px solid var(--border);
             overflow: hidden;
+            transition: all var(--transition-medium);
+        }
+
+        .faq-item:hover {
+            border-color: var(--glass-border-hover);
         }
 
         .faq-question {
-            padding: 20px 25px;
-            cursor: pointer;
+            padding: 25px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .faq-question h4 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--text-primary);
             font-weight: 600;
-            transition: 0.3s;
         }
 
-        .faq-question:hover {
-            background: rgba(88, 101, 242, 0.1);
-        }
-
-        .faq-question i {
-            transition: 0.3s;
-        }
-
-        .faq-item.active .faq-question i {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            padding: 0 25px;
-            max-height: 0;
-            overflow: hidden;
-            transition: 0.3s;
-            color: var(--text-sec);
-        }
-
-        .faq-item.active .faq-answer {
-            padding: 0 25px 25px 25px;
-            max-height: 500px;
-        }
-
-        /* --- CTA Final --- */
-        .final-cta {
-            padding: 100px 20px;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary) 0%, #3b42a5 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .final-cta::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -200px;
-            right: -200px;
-        }
-
-        .final-cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .final-cta p {
-            max-width: 600px;
-            margin: 0 auto 40px auto;
-            opacity: 0.9;
-            position: relative;
-        }
-
-        .btn-white {
-            background: white;
-            color: var(--primary);
-            padding: 15px 40px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        .btn-white:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        /* --- Footer --- */
-        footer {
-            padding: 60px 5% 30px 5%;
-            border-top: 1px solid var(--border);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto 40px auto;
-        }
-
-        .footer-col h4 {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 12px;
-        }
-
-        .footer-col ul li a {
-            color: var(--text-sec);
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .footer-col ul li a:hover {
-            color: var(--accent);
-        }
-
-        .footer-col p {
-            color: var(--text-sec);
-            font-size: 0.9rem;
-            line-height: 1.8;
-        }
-
-        .footer-col .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .footer-col .social-links a {
-            width: 40px;
-            height: 40px;
-            background: var(--card-bg);
+        .faq-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 242, 234, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-main);
-            transition: 0.3s;
+            color: var(--accent-primary);
+            transition: all var(--transition-medium);
         }
 
-        .footer-col .social-links a:hover {
-            background: var(--primary);
+        .faq-item.active .faq-icon {
+            background: var(--accent-gradient);
+            color: #000;
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-medium);
+        }
+
+        .faq-answer-content {
+            padding: 0 30px 25px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .cta-section {
+            text-align: center;
+            padding: 100px 50px;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 242, 234, 0.05) 100%);
+        }
+
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--accent-gradient);
+            border-radius: 35px;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-box h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: #000;
+            margin-bottom: 15px;
+        }
+
+        .cta-box p {
+            color: rgba(0, 0, 0, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-dark {
+            padding: 18px 45px;
+            background: #000;
+            border: none;
+            border-radius: 35px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-dark:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--glass-border);
+            padding: 80px 50px 40px;
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            font-size: 1.2rem;
+        }
+
+        .social-link:hover {
+            background: var(--accent-gradient);
+            border-color: transparent;
+            color: #000;
+            transform: translateY(-3px);
+        }
+
+        .footer-column h5 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--accent-primary);
+            padding-left: 5px;
         }
 
         .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid var(--border);
-            color: var(--text-sec);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-bottom p {
+            color: var(--text-muted);
             font-size: 0.85rem;
         }
 
-        /* --- Mobile Responsive --- */
-        @media (max-width: 768px) {
-            header { padding: 15px 5%; }
-            nav { display: none; }
-            .mobile-menu { display: block; }
-            
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1rem; }
-            
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            
-            .step-item:not(:last-child)::after { display: none; }
-            
-            .reputation-container { padding: 30px; }
-            
-            .final-cta h2 { font-size: 2rem; }
-            
-            .footer-content { grid-template-columns: 1fr; }
+        .footer-legal {
+            display: flex;
+            gap: 30px;
         }
 
-        @media (max-width: 480px) {
-            .stats { grid-template-columns: 1fr; }
-            .cta-container { flex-direction: column; }
-            .btn-large { width: 100%; justify-content: center; }
+        .footer-legal a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-legal a:hover {
+            color: var(--accent-primary);
+        }
+
+        /* ========================================
+           ANIMACIONES SCROLL
+           ======================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            section {
+                padding: 80px 20px;
+            }
+            
+            .hero {
+                padding: 120px 20px 60px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+            
+            .calculator-container {
+                padding: 30px 20px;
+            }
+            
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1.5fr 1fr 1fr;
+                padding: 15px 20px;
+                font-size: 0.85rem;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* ========================================
+           LOADER
+           ======================================== */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-logo {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 1.5s infinite;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            width: 0;
+            height: 100%;
+            background: var(--accent-gradient);
+            animation: loadProgress 1.5s ease forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0; }
+            100% { width: 100%; }
         }
     </style>
 </head>
 <body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-logo">ZYNEX</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Navegación -->
-    <header>
-        <div class="logo">
-            <i class="fab fa-discord"></i>
-            Crypto<span>P2P</span>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bg-gradient"></div>
+        <div class="grid-overlay"></div>
+        <div class="floating-particles" id="particles"></div>
+    </div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="logo-container">
+            <div class="logo-icon">Z</div>
+            <div class="logo-text">ZYNEX</div>
         </div>
         <nav>
             <ul>
-                <li><a href="#features">Características</a></li>
                 <li><a href="#how-it-works">Cómo Funciona</a></li>
-                <li><a href="#security">Seguridad</a></li>
+                <li><a href="#calculator">Calculadora</a></li>
+                <li><a href="#features">Características</a></li>
+                <li><a href="#comparison">Comparativa</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
         </nav>
-        <a href="TU_ENLACE_DE_DISCORD_AQUI" class="btn-discord" target="_blank">
-            <i class="fab fa-discord"></i> Unirse
-        </a>
-        <div class="mobile-menu">
-            <i class="fas fa-bars"></i>
+        <a href="#join" class="nav-cta">Empezar Ahora</a>
+        <div class="mobile-menu-btn" id="mobileMenuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <span class="hero-badge">
-                <i class="fas fa-shield-alt"></i> 100% Seguro y Verificado
-            </span>
-            <h1>El Exchange P2P <br><span>Más Confiable de Discord</span></h1>
-            <p>Compra y vende criptomonedas directamente con otros usuarios. Sin custodia de fondos, con sistema de reputación transparente y soporte mediado por staff 24/7.</p>
-            
-            <div class="cta-container">
-                <a href="TU_ENLACE_DE_DISCORD_AQUI" class="btn-discord btn-large" target="_blank">
-                    <i class="fab fa-discord"></i> Empezar a Operar
-                </a>
-                <a href="#how-it-works" class="btn-discord btn-large btn-secondary">
-                    <i class="fas fa-play"></i> Ver Tutorial
-                </a>
+        <div class="hero-badge">
+            <span class="dot"></span>
+            <span>Plataforma Activa 24/7</span>
+        </div>
+        <h1>El Futuro del<br><span class="gradient-text">Trading P2P Seguro</span></h1>
+        <p>ZYNEX es la plataforma de coordinación definitiva para transacciones crypto. Sin custodia de fondos, supervisión humana en tiempo real y comisión transparente del 5%.</p>
+        <div class="hero-buttons">
+            <a href="#join" class="btn-primary">Crear Cuenta Gratis</a>
+            <a href="#how-it-works" class="btn-secondary">Ver Demo</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-number" data-target="5000">0</span>
+                <span class="stat-label">Usuarios Activos</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" data-target="50">0</span>
+                <span class="stat-label">Millones en Volumen</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" data-target="99">0</span>
+                <span class="stat-label">% Satisfacción</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" data-target="24">0</span>
+                <span class="stat-label">Horas Soporte</span>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works">
+        <div class="section-header reveal">
+            <span class="section-tag">Proceso Simple</span>
+            <h2 class="section-title">Cómo Funciona ZYNEX</h2>
+            <p class="section-subtitle">Cuatro pasos simples para realizar transacciones seguras y supervisadas</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card reveal">
+                <div class="step-number">1</div>
+                <h4>Registro Verificado</h4>
+                <p>Crea tu cuenta y completa la verificación KYC básica. Proceso rápido de menos de 5 minutos con validación instantánea.</p>
+            </div>
+            <div class="step-card reveal">
+                <div class="step-number">2</div>
+                <h4>Crear Ticket</h4>
+                <p>Abre un ticket privado indicando monto, criptomoneda y método de pago. Nuestro sistema matchea automáticamente.</p>
+            </div>
+            <div class="step-card reveal">
+                <div class="step-number">3</div>
+                <h4>Supervisión Staff</h4>
+                <p>Un moderador verifica ambas partes en tiempo real. Se confirma el hash de transacción antes de cerrar.</p>
+            </div>
+            <div class="step-card reveal">
+                <div class="step-number">4</div>
+                <h4>Completado + Vouch</h4>
+                <p>Transacción finalizada. Recibes auto-vouch automático que aumenta tu reputación en la plataforma.</p>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats">
-        <div class="stat-item">
-            <span class="stat-number">24/7</span>
-            <span class="stat-label">Soporte Activo</span>
+    <!-- Calculator Section -->
+    <section id="calculator" class="calculator-section">
+        <div class="section-header reveal">
+            <span class="section-tag">Transparencia Total</span>
+            <h2 class="section-title">Calculadora de Comisiones</h2>
+            <p class="section-subtitle">Sin costes ocultos. Calcula exactamente cuánto pagarás por tu transacción</p>
         </div>
-        <div class="stat-item">
-            <span class="stat-number">0%</span>
-            <span class="stat-label">Comisión del Exchange</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">No Custodio</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">+500</span>
-            <span class="stat-label">Operaciones Exitosas</span>
+        <div class="calculator-container reveal">
+            <div class="calculator-header">
+                <h3>💰 Calcula tu Comisión del 5%</h3>
+                <p>Introduce el monto de tu transacción para ver el desglose completo</p>
+            </div>
+            <div class="calculator-grid">
+                <div class="calculator-inputs">
+                    <div class="calculator-input-group">
+                        <label for="amount">Monto de Transacción</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="amount" value="1000" min="10" max="1000000" step="10">
+                            <span class="currency">USD</span>
+                        </div>
+                    </div>
+                    <div class="calculator-input-group">
+                        <label for="crypto">Criptomoneda</label>
+                        <div class="input-wrapper">
+                            <select id="crypto" style="width: 100%; padding: 18px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 15px; color: var(--text-primary); font-size: 1.2rem; font-family: var(--font-display);">
+                                <option value="USDT">USDT (Tether)</option>
+                                <option value="BTC">BTC (Bitcoin)</option>
+                                <option value="ETH">ETH (Ethereum)</option>
+                                <option value="BNB">BNB (Binance Coin)</option>
+                                <option value="SOL">SOL (Solana)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calculator-input-group">
+                        <label for="paymentMethod">Método de Pago</label>
+                        <div class="input-wrapper">
+                            <select id="paymentMethod" style="width: 100%; padding: 18px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 15px; color: var(--text-primary); font-size: 1.2rem; font-family: var(--font-display);">
+                                <option value="bank">Transferencia Bancaria</option>
+                                <option value="bizum">Bizum</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="revolut">Revolut</option>
+                                <option value="cash">Efectivo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="calculator-results">
+                    <div class="result-item">
+                        <span class="result-label">Monto de Transacción</span>
+                        <span class="result-value" id="resultAmount">$1,000.00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Comisión ZYNEX (5%)</span>
+                        <span class="result-value highlight" id="resultCommission">$50.00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Tasa de Red (estimada)</span>
+                        <span class="result-value" id="resultNetwork">$2.50</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total a Pagar</span>
+                        <span class="result-value final" id="resultTotal">$1,052.50</span>
+                    </div>
+                    <div class="calculator-note">
+                        ⚠️ <strong>Nota:</strong> La comisión del 5% solo se cobra sobre transacciones exitosas. Si la operación no se completa, no pagas nada. Las tasas de red varían según la blockchain.
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="section-title">
-        <h2>¿Por Qué Elegirnos?</h2>
-        <p>Descubre todas las ventajas de operar en nuestro exchange P2P dentro de Discord</p>
-    </section>
-
-    <section class="features">
-        <div class="card">
-            <i class="fas fa-wallet"></i>
-            <h3>Modelo No Custodio</h3>
-            <p>Nunca almacenamos ni tenemos acceso a tus fondos. Las transacciones son directamente entre compradores y vendedores.</p>
-            <ul>
-                <li><i class="fas fa-check"></i> Tú controlas tus claves privadas</li>
-                <li><i class="fas fa-check"></i> Sin riesgo de hackeo al exchange</li>
-                <li><i class="fas fa-check"></i> Transparencia total</li>
-            </ul>
+    <section id="features">
+        <div class="section-header reveal">
+            <span class="section-tag">Ventajas Exclusivas</span>
+            <h2 class="section-title">¿Por Qué Elegir ZYNEX?</h2>
+            <p class="section-subtitle">Características diseñadas para traders que valoran seguridad y transparencia</p>
         </div>
-
-        <div class="card">
-            <i class="fas fa-user-shield"></i>
-            <h3>Sistema de Reputación</h3>
-            <p>Cada operación exitosa genera un vouch público. Construye tu reputación y opera con usuarios verificados.</p>
-            <ul>
-                <li><i class="fas fa-check"></i> Vouches verificables</li>
-                <li><i class="fas fa-check"></i> Roles por nivel de confianza</li>
-                <li><i class="fas fa-check"></i> Historial público de operaciones</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <i class="fas fa-headset"></i>
-            <h3>Soporte con Tickets</h3>
-            <p>Todas las operaciones se coordinan en tickets privados con posibilidad de mediación del staff si hay conflictos.</p>
-            <ul>
-                <li><i class="fas fa-check"></i> Respuesta rápida del staff</li>
-                <li><i class="fas fa-check"></i> Mediación en disputas</li>
-                <li><i class="fas fa-check"></i> Canal seguro para coordinar</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <i class="fas fa-bolt"></i>
-            <h3>Operaciones Rápidas</h3>
-            <p>Sin procesos burocráticos. Verifícate una vez y opera cuando quieras con la comunidad activa.</p>
-            <ul>
-                <li><i class="fas fa-check"></i> Verificación rápida</li>
-                <li><i class="fas fa-check"></i> Comunidad activa 24/7</li>
-                <li><i class="fas fa-check"></i> Sin límites de operación</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <i class="fas fa-globe"></i>
-            <h3>Múltiples Métodos de Pago</h3>
-            <p>Aceptamos diversas formas de pago según acuerden comprador y vendedor. Flexibilidad total.</p>
-            <ul>
-                <li><i class="fas fa-check"></i> Transferencias bancarias</li>
-                <li><i class="fas fa-check"></i> PayPal / Skrill / Neteller</li>
-                <li><i class="fas fa-check"></i> Tarjetas de regalo</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <i class="fas fa-lock"></i>
-            <h3>Seguridad Prioritaria</h3>
-            <p>Implementamos las mejores prácticas de seguridad para proteger a nuestra comunidad de estafas.</p>
-            <ul>
-                <li><i class="fas fa-check"></i> Verificación de identidad</li>
-                <li><i class="fas fa-check"></i> Advertencias anti-estafa</li>
-                <li><i class="fas fa-check"></i> Staff nunca pide dinero</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- How it Works -->
-    <section id="how-it-works" class="steps">
-        <div class="section-title">
-            <h2>¿Cómo Operar?</h2>
-            <p>Sigue estos 5 pasos simples para realizar tu primera operación segura</p>
-        </div>
-
-        <div class="steps-container">
-            <div class="step-item">
-                <div class="step-number">1</div>
-                <h3>Verifícate</h3>
-                <p>Completa la verificación en el canal <code>#✅・verificación</code> para obtener acceso a los canales de trading.</p>
+        <div class="features-grid">
+            <div class="feature-card reveal-left">
+                <div class="feature-icon">🔒</div>
+                <h4>Sin Custodia de Fondos</h4>
+                <p>Nunca tenemos acceso a tus claves privadas o fondos. Las transacciones son directas entre usuarios (P2P). ZYNEX solo coordina y supervisa.</p>
             </div>
-            <div class="step-item">
-                <div class="step-number">2</div>
-                <h3>Publica tu Orden</h3>
-                <p>Ve al canal de compra o venta y publica tu orden con el monto, método de pago y criptomoneda.</p>
+            <div class="feature-card reveal-right">
+                <div class="feature-icon">🎫</div>
+                <h4>Tickets Privados</h4>
+                <p>Cada operación ocurre en un canal privado supervisado. Cero exposición pública de montos o datos sensibles de los participantes.</p>
             </div>
-            <div class="step-item">
-                <div class="step-number">3</div>
-                <h3>Abre Ticket</h3>
-                <p>Una vez encontrado un match, abre un ticket privado. <strong>Nunca operes fuera de tickets.</strong></p>
+            <div class="feature-card reveal-left">
+                <div class="feature-icon">⚡</div>
+                <h4>Auto-Vouch Instantáneo</h4>
+                <p>Sistema de reputación automático. Al confirmar el hash de transacción, recibes vouch inmediato que aumenta tu confianza en la plataforma.</p>
             </div>
-            <div class="step-item">
-                <div class="step-number">4</div>
-                <h3>Coordina el Pago</h3>
-                <p>El staff mediará si es necesario. El comprador paga y el vendedor libera las criptomonedas.</p>
+            <div class="feature-card reveal-right">
+                <div class="feature-icon">🛡️</div>
+                <h4>Protección Anti-Phishing</h4>
+                <p>Prohibido operar fuera del sistema. Protección total contra estafas en DM, Telegram o cualquier canal externo no autorizado.</p>
             </div>
-            <div class="step-item">
-                <div class="step-number">5</div>
-                <h3>Deja tu Vouch</h3>
-                <p>Una vez completada la operación, deja tu reseña en el canal de reputación para construir confianza.</p>
+            <div class="feature-card reveal-left">
+                <div class="feature-icon">👁️</div>
+                <h4>Supervisión 24/7</h4>
+                <p>Staff humano disponible las 24 horas, los 7 días de la semana. Verificación manual de vendedores y validación de transacciones en tiempo real.</p>
+            </div>
+            <div class="feature-card reveal-right">
+                <div class="feature-icon">📊</div>
+                <h4>Logs Auditables</h4>
+                <p>Todas las transacciones quedan registradas en logs auditables. Transparencia completa para cualquier verificación futura o disputa.</p>
             </div>
         </div>
     </section>
 
-    <!-- Supported Cryptocurrencies -->
-    <section class="section-title">
-        <h2>Criptomonedas Soportadas</h2>
-        <p>Operamos con las principales criptomonedas del mercado</p>
-    </section>
-
-    <section class="crypto-grid">
-        <div class="crypto-item">
-            <i class="fab fa-bitcoin btc"></i>
-            <h4>Bitcoin</h4>
-            <span>BTC</span>
+    <!-- Comparison Section -->
+    <section id="comparison">
+        <div class="section-header reveal">
+            <span class="section-tag">Comparativa</span>
+            <h2 class="section-title">ZYNEX vs La Competencia</h2>
+            <p class="section-subtitle">Descubre por qué los traders profesionales eligen nuestra plataforma</p>
         </div>
-        <div class="crypto-item">
-            <i class="fab fa-ethereum eth"></i>
-            <h4>Ethereum</h4>
-            <span>ETH</span>
-        </div>
-        <div class="crypto-item">
-            <i class="fas fa-circle-notch usdt"></i>
-            <h4>Tether</h4>
-            <span>USDT</span>
-        </div>
-        <div class="crypto-item">
-            <i class="fas fa-coins bnb"></i>
-            <h4>Binance Coin</h4>
-            <span>BNB</span>
-        </div>
-        <div class="crypto-item">
-            <i class="fas fa-rocket sol"></i>
-            <h4>Solana</h4>
-            <span>SOL</span>
-        </div>
-        <div class="crypto-item">
-            <i class="fas fa-atom ada"></i>
-            <h4>Cardano</h4>
-            <span>ADA</span>
-        </div>
-        <div class="crypto-item">
-            <i class="fas fa-dollar-sign" style="color: #26a17b;"></i>
-            <h4>USDC</h4>
-            <span>Stablecoin</span>
-        </div>
-        <div class="crypto-item">
-            <i class="fas fa-coins" style="color: #9945ff;"></i>
-            <h4>Otras</h4>
-            <span>Consultar</span>
-        </div>
-    </section>
-
-    <!-- Payment Methods -->
-    <section class="payment-methods">
-        <div class="section-title">
-            <h2>Métodos de Pago Aceptados</h2>
-            <p>Flexibilidad para que operes como prefieras</p>
-        </div>
-
-        <div class="payment-grid">
-            <div class="payment-item">
-                <i class="fas fa-university"></i>
-                <h4>Transferencia Bancaria</h4>
+        <div class="comparison-table reveal">
+            <div class="comparison-header">
+                <div>Característica</div>
+                <div>Otros Exchanges</div>
+                <div>ZYNEX</div>
             </div>
-            <div class="payment-item">
-                <i class="fab fa-paypal"></i>
-                <h4>PayPal</h4>
+            <div class="comparison-row zynex-highlight">
+                <div>Comisión</div>
+                <div>0.1% - 4.5% + retiros</div>
+                <div>5% Todo Incluido</div>
             </div>
-            <div class="payment-item">
-                <i class="fas fa-credit-card"></i>
-                <h4>Tarjetas de Débito/Crédito</h4>
+            <div class="comparison-row zynex-highlight">
+                <div>Custodia de Fondos</div>
+                <div><span class="cross">✕</span> Sí (riesgo)</div>
+                <div><span class="check">✓</span> No (tú controlas)</div>
             </div>
-            <div class="payment-item">
-                <i class="fas fa-gift"></i>
-                <h4>Tarjetas de Regalo</h4>
+            <div class="comparison-row zynex-highlight">
+                <div>Supervisión Humana</div>
+                <div><span class="cross">✕</span> Automatizado</div>
+                <div><span class="check">✓</span> Staff 24/7</div>
             </div>
-            <div class="payment-item">
-                <i class="fas fa-mobile-alt"></i>
-                <h4>Bizum / Yape / Plin</h4>
+            <div class="comparison-row zynex-highlight">
+                <div>Tickets Privados</div>
+                <div><span class="cross">✕</span> Público</div>
+                <div><span class="check">✓</span> 100% Privado</div>
             </div>
-            <div class="payment-item">
-                <i class="fas fa-exchange-alt"></i>
-                <h4>Otras Criptomonedas</h4>
+            <div class="comparison-row zynex-highlight">
+                <div>Auto-Vouch</div>
+                <div><span class="cross">✕</span> No disponible</div>
+                <div><span class="check">✓</span> Instantáneo</div>
+            </div>
+            <div class="comparison-row zynex-highlight">
+                <div>Soporte en Español</div>
+                <div><span class="cross">✕</span> Limitado</div>
+                <div><span class="check">✓</span> Nativo</div>
+            </div>
+            <div class="comparison-row zynex-highlight">
+                <div>KYC Requerido</div>
+                <div><span class="cross">✕</span> Obligatorio</div>
+                <div><span class="check">✓</span> Básico/Opcional</div>
             </div>
         </div>
     </section>
 
-    <!-- Security Section -->
-    <section id="security" class="security">
-        <div class="section-title">
-            <h2><i class="fas fa-shield-alt"></i> Seguridad Primero</h2>
-            <p>Tu protección es nuestra máxima prioridad. Lee estas reglas obligatorias.</p>
+    <!-- Testimonials Section -->
+    <section id="testimonials">
+        <div class="section-header reveal">
+            <span class="section-tag">Testimonios</span>
+            <h2 class="section-title">Lo Que Dicen Nuestros Usuarios</h2>
+            <p class="section-subtitle">Miles de transacciones exitosas respaldan nuestra reputación</p>
         </div>
-
-        <div class="security-grid">
-            <div class="security-card">
-                <i class="fas fa-exclamation-triangle"></i>
-                <div>
-                    <h4>Nunca Compartas tu Seed Phrase</h4>
-                    <p>Ningún miembro del staff te pedirá jamás tus 12/24 palabras de recuperación. Quien lo pida es un estafador.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Llevo 6 meses operando en ZYNEX y nunca he tenido un problema. La supervisión humana marca la diferencia. El 5% vale cada céntimo por la tranquilidad."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">CR</div>
+                    <div class="testimonial-info">
+                        <h5>Carlos R.</h5>
+                        <span>Trader desde 2019 • 47 operaciones</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="security-card">
-                <i class="fas fa-user-lock"></i>
-                <div>
-                    <h4>Activa 2FA en Todo</h4>
-                    <p>Usa autenticación de dos factores en Discord, tu exchange y tu wallet. Es tu primera línea de defensa.</p>
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Probé Binance P2P y otros, pero siempre tenía miedo de estafas. Con ZYNEX el staff verifica todo antes de cerrar. Mi reputación ha crecido mucho."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">ML</div>
+                    <div class="testimonial-info">
+                        <h5>María L.</h5>
+                        <span>Vendedora Verificada • 128 operaciones</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="security-card">
-                <i class="fas fa-ticket-alt"></i>
-                <div>
-                    <h4>Sin Ticket = Sin Protección</h4>
-                    <p>Todas las operaciones deben coordinarse dentro de un ticket. Fuera de tickets, el staff no puede ayudarte.</p>
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Lo mejor es que no custodian mis fondos. Yo controlo mis claves en todo momento. La transparencia del 5% es refrescante comparado con otros exchanges."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">JD</div>
+                    <div class="testimonial-info">
+                        <h5>Javier D.</h5>
+                        <span>Volume Trader • 200+ operaciones</span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="security-card">
-                <i class="fas fa-user-slash"></i>
-                <div>
-                    <h4>Staff Nunca Pide Dinero</h4>
-                    <p>Nuestro personal nunca te solicitará pagos para "verificar" tu cuenta o "liberar" fondos. Es una estafa común.</p>
-                </div>
-            </div>
-
-            <div class="security-card">
-                <i class="fas fa-link"></i>
-                <div>
-                    <h4>Cuidado con Links Sospechosos</h4>
-                    <p>Verifica siempre las URLs. No hagas clic en enlaces de desconocidos que prometan airdrops o recompensas.</p>
-                </div>
-            </div>
-
-            <div class="security-card">
-                <i class="fas fa-flag"></i>
-                <div>
-                    <h4>Reporta Comportamientos</h4>
-                    <p>Si alguien te parece sospechoso, repórtalo inmediatamente al staff. Protegemos a la comunidad juntos.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Reputation System -->
-    <section class="reputation">
-        <div class="section-title">
-            <h2>Sistema de Reputación</h2>
-            <p>Construye confianza y accede a beneficios exclusivos</p>
-        </div>
-
-        <div class="reputation-container">
-            <p style="text-align: center; color: var(--text-sec); max-width: 700px; margin: 0 auto;">
-                Cada operación exitosa te permite recibir un <strong>vouch</strong> (reseña positiva) de tu contraparte. 
-                Acumula vouches para subir de nivel y obtener roles especiales en el servidor.
-            </p>
-
-            <div class="reputation-levels">
-                <div class="level bronze">
-                    <i class="fas fa-medal"></i>
-                    <h4>Novato</h4>
-                    <p>1-5 Vouches</p>
-                </div>
-                <div class="level silver">
-                    <i class="fas fa-medal"></i>
-                    <h4>Trader</h4>
-                    <p>6-15 Vouches</p>
-                </div>
-                <div class="level gold">
-                    <i class="fas fa-medal"></i>
-                    <h4>Veterano</h4>
-                    <p>16-30 Vouches</p>
-                </div>
-                <div class="level platinum">
-                    <i class="fas fa-crown"></i>
-                    <h4>Élite</h4>
-                    <p>30+ Vouches</p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="TU_ENLACE_DE_DISCORD_AQUI" class="btn-discord" target="_blank">
-                    <i class="fab fa-discord"></i> Comienza a Construir tu Reputación
-                </a>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <div class="section-title">
-            <h2>Preguntas Frecuentes</h2>
-            <p>Resolvemos tus dudas más comunes</p>
+    <section id="faq">
+        <div class="section-header reveal">
+            <span class="section-tag">Ayuda</span>
+            <h2 class="section-title">Preguntas Frecuentes</h2>
+            <p class="section-subtitle">Resolvemos tus dudas sobre el funcionamiento de ZYNEX</p>
         </div>
-
         <div class="faq-container">
-            <div class="faq-item">
+            <div class="faq-item reveal">
                 <div class="faq-question">
-                    ¿El exchange cobra comisiones?
-                    <i class="fas fa-chevron-down"></i>
+                    <h4>¿Cómo se cobra la comisión del 5%?</h4>
+                    <div class="faq-icon">+</div>
                 </div>
                 <div class="faq-answer">
-                    <p>No, nuestro exchange es completamente gratuito. No cobramos comisiones por operar. Solo facilitamos el punto de encuentro entre compradores y vendedores.</p>
+                    <div class="faq-answer-content">
+                        La comisión del 5% se deduce automáticamente del monto total de la transacción una vez completada. Si la operación no se finaliza por cualquier motivo, no se cobra ninguna comisión. El desglose es visible antes de confirmar cualquier operación.
+                    </div>
                 </div>
             </div>
-
-            <div class="faq-item">
+            <div class="faq-item reveal">
                 <div class="faq-question">
-                    ¿Cómo me verifico para operar?
-                    <i class="fas fa-chevron-down"></i>
+                    <h4>¿ZYNEX custodia mis fondos?</h4>
+                    <div class="faq-icon">+</div>
                 </div>
                 <div class="faq-answer">
-                    <p>Debes ir al canal <code>#✅・verificación</code> en nuestro Discord y seguir las instrucciones. Generalmente requiere completar un captcha y aceptar las reglas del servidor.</p>
+                    <div class="faq-answer-content">
+                        <strong>No.</strong> ZYNEX nunca tiene acceso a tus fondos o claves privadas. Somos una plataforma de coordinación P2P. Las transacciones se realizan directamente entre las wallets de los usuarios. Solo supervisamos y verificamos que todo sea correcto.
+                    </div>
                 </div>
             </div>
-
-            <div class="faq-item">
+            <div class="faq-item reveal">
                 <div class="faq-question">
-                    ¿Qué pasa si hay una disputa en mi operación?
-                    <i class="fas fa-chevron-down"></i>
+                    <h4>¿Qué criptomonedas están disponibles?</h4>
+                    <div class="faq-icon">+</div>
                 </div>
                 <div class="faq-answer">
-                    <p>Si hay algún conflicto, el staff actuará como mediador en el ticket. Proporciona todas las pruebas necesarias (capturas de pantalla, comprobantes de pago, etc.) para resolver la situación.</p>
+                    <div class="faq-answer-content">
+                        Actualmente soportamos USDT (TRC20 y ERC20), BTC, ETH, BNB y SOL. Estamos añadiendo más criptomonedas regularmente según la demanda de los usuarios. Puedes ver la lista completa en tu dashboard al crear un ticket.
+                    </div>
                 </div>
             </div>
-
-            <div class="faq-item">
+            <div class="faq-item reveal">
                 <div class="faq-question">
-                    ¿Puedo operar sin verificación?
-                    <i class="fas fa-chevron-down"></i>
+                    <h4>¿Cuánto tarda la verificación de cuenta?</h4>
+                    <div class="faq-icon">+</div>
                 </div>
                 <div class="faq-answer">
-                    <p>No, la verificación es obligatoria para acceder a los canales de trading. Esto protege a toda la comunidad de bots y cuentas fraudulentas.</p>
+                    <div class="faq-answer-content">
+                        El proceso de registro toma menos de 5 minutos. La verificación KYC básica es instantánea en la mayoría de casos. Para volúmenes mayores de $10,000 USD, se requiere verificación adicional que puede tardar hasta 24 horas.
+                    </div>
                 </div>
             </div>
-
-            <div class="faq-item">
+            <div class="faq-item reveal">
                 <div class="faq-question">
-                    ¿El staff tiene acceso a mis fondos?
-                    <i class="fas fa-chevron-down"></i>
+                    <h4>¿Qué pasa si hay una disputa?</h4>
+                    <div class="faq-icon">+</div>
                 </div>
                 <div class="faq-answer">
-                    <p>Absolutamente NO. Somos un exchange P2P no custodio. Las transacciones son directamente entre usuarios. El staff solo media en caso de disputas, nunca toca los fondos.</p>
+                    <div class="faq-answer-content">
+                        Nuestro equipo de soporte 24/7 interviene inmediatamente en cualquier disputa. Al tener logs auditables y supervisión en tiempo real, el 99% de las disputas se resuelven en menos de 2 horas a favor de la parte con evidencia válida.
+                    </div>
                 </div>
             </div>
-
-            <div class="faq-item">
+            <div class="faq-item reveal">
                 <div class="faq-question">
-                    ¿Hay límites de operación?
-                    <i class="fas fa-chevron-down"></i>
+                    <h4>¿Hay límites de transacción?</h4>
+                    <div class="faq-icon">+</div>
                 </div>
                 <div class="faq-answer">
-                    <p>No hay límites impuestos por el exchange. Los límites los acuerdan directamente el comprador y el vendedor según su confianza y método de pago.</p>
+                    <div class="faq-answer-content">
+                        Los usuarios verificados básicos pueden operar hasta $5,000 USD por transacción. Con verificación completa, el límite aumenta a $50,000 USD. Para volúmenes institucionales, contacta con nuestro equipo de ventas para límites personalizados.
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Final CTA -->
-    <section class="final-cta">
-        <h2>¿Listo para Empezar?</h2>
-        <p>Únete a nuestra comunidad de traders y comienza a operar de forma segura hoy mismo.</p>
-        <a href="TU_ENLACE_DE_DISCORD_AQUI" class="btn-white" target="_blank">
-            <i class="fab fa-discord"></i> Unirse al Servidor Ahora
-        </a>
+    <!-- CTA Section -->
+    <section class="cta-section" id="join">
+        <div class="cta-box reveal">
+            <div class="cta-content">
+                <h2>Comienza a Operar Hoy</h2>
+                <p>Únete a más de 5,000 traders que ya confían en ZYNEX para sus transacciones P2P seguras</p>
+                <a href="#" class="btn-dark">Crear Cuenta Gratis →</a>
+            </div>
+        </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-content">
-            <div class="footer-col">
-                <div class="logo" style="margin-bottom: 20px;">
-                    <i class="fab fa-discord"></i>
-                    Crypto<span>P2P</span>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo-container">
+                    <div class="logo-icon">Z</div>
+                    <div class="logo-text">ZYNEX</div>
                 </div>
-                <p>El exchange P2P más seguro y confiable de Discord. Opera sin custodia, construye reputación y únete a nuestra comunidad.</p>
+                <p>Plataforma líder de coordinación P2P para transacciones crypto. Seguridad, transparencia y supervisión humana 24/7.</p>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-telegram"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link">📱</a>
+                    <a href="#" class="social-link">💬</a>
+                    <a href="#" class="social-link">🐦</a>
+                    <a href="#" class="social-link">📸</a>
                 </div>
             </div>
-
-            <div class="footer-col">
-                <h4>Enlaces Rápidos</h4>
+            <div class="footer-column">
+                <h5>Plataforma</h5>
                 <ul>
-                    <li><a href="#features">Características</a></li>
                     <li><a href="#how-it-works">Cómo Funciona</a></li>
-                    <li><a href="#security">Seguridad</a></li>
-                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#calculator">Calculadora</a></li>
+                    <li><a href="#features">Características</a></li>
+                    <li><a href="#comparison">Comparativa</a></li>
+                    <li><a href="#testimonials">Testimonios</a></li>
                 </ul>
             </div>
-
-            <div class="footer-col">
-                <h4>Legal</h4>
+            <div class="footer-column">
+                <h5>Soporte</h5>
+                <ul>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#">Centro de Ayuda</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="#">Estado del Sistema</a></li>
+                    <li><a href="#">Reportar Incidencia</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h5>Legal</h5>
                 <ul>
                     <li><a href="#">Términos de Servicio</a></li>
                     <li><a href="#">Política de Privacidad</a></li>
-                    <li><a href="#">Reglas del Servidor</a></li>
-                    <li><a href="#">Política de Reembolso</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Contacto</h4>
-                <ul>
-                    <li><a href="TU_ENLACE_DE_DISCORD_AQUI"><i class="fab fa-discord"></i> Servidor Discord</a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> soporte@exchange.com</a></li>
-                    <li><a href="#"><i class="fab fa-telegram"></i> @soporte_exchange</a></li>
+                    <li><a href="#">Política AML/KYC</a></li>
+                    <li><a href="#">Cookies</a></li>
+                    <li><a href="#">Descargo de Responsabilidad</a></li>
                 </ul>
             </div>
         </div>
-
         <div class="footer-bottom">
-            <p>&copy; 2024 CryptoP2P Exchange. Todos los derechos reservados.</p>
-            <p style="margin-top: 10px; font-size: 0.75rem; opacity: 0.5;">
-                ⚠️ Advertencia: Las criptomonedas son activos volátiles. Opera bajo tu propia responsabilidad. 
-                Este exchange es un punto de encuentro P2P, no custodiamos fondos.
-            </p>
+            <p>© 2026 ZYNEX. Todos los derechos reservados.</p>
+            <div class="footer-legal">
+                <a href="#">Términos</a>
+                <a href="#">Privacidad</a>
+                <a href="#">Seguridad</a>
+            </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- JavaScript -->
     <script>
-        // FAQ Toggle
-        document.querySelectorAll('.faq-question').forEach(question => {
+        // ========================================
+        // PAGE LOADER
+        // ========================================
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 1500);
+        });
+
+        // ========================================
+        // HEADER SCROLL EFFECT
+        // ========================================
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // ========================================
+        // PARTICLES GENERATION
+        // ========================================
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ========================================
+        // SCROLL REVEAL ANIMATIONS
+        // ========================================
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+            
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Trigger on load
+
+        // ========================================
+        // STATS COUNTER ANIMATION
+        // ========================================
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            
+            stats.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        stat.textContent = Math.floor(current) + (target >= 1000 ? '+' : '%');
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        stat.textContent = target.toLocaleString() + (target >= 1000 ? '+' : '%');
+                    }
+                };
+                
+                // Start animation when element is visible
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        updateCounter();
+                        observer.unobserve(stat);
+                    }
+                });
+                
+                observer.observe(stat);
+            });
+        }
+        animateStats();
+
+        // ========================================
+        // CALCULATOR FUNCTIONALITY
+        // ========================================
+        const amountInput = document.getElementById('amount');
+        const resultAmount = document.getElementById('resultAmount');
+        const resultCommission = document.getElementById('resultCommission');
+        const resultNetwork = document.getElementById('resultNetwork');
+        const resultTotal = document.getElementById('resultTotal');
+
+        function updateCalculator() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const commission = amount * 0.05;
+            const networkFee = (amount * 0.0025).toFixed(2); // ~0.25% estimated network fee
+            const total = amount + commission + parseFloat(networkFee);
+
+            resultAmount.textContent = '$' + amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            resultCommission.textContent = '$' + commission.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            resultNetwork.textContent = '$' + networkFee;
+            resultTotal.textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        amountInput.addEventListener('input', updateCalculator);
+        updateCalculator(); // Initial calculation
+
+        // ========================================
+        // FAQ ACCORDION
+        // ========================================
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
             question.addEventListener('click', () => {
-                const item = question.parentElement;
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.faq-icon').textContent = '+';
+                    }
+                });
+                
+                // Toggle current item
                 item.classList.toggle('active');
+                const icon = item.querySelector('.faq-icon');
+                icon.textContent = item.classList.contains('active') ? '−' : '+';
             });
         });
 
-        // Mobile Menu Toggle
-        document.querySelector('.mobile-menu').addEventListener('click', () => {
-            const nav = document.querySelector('nav');
-            nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
-        });
-
-        // Smooth Scroll for Anchor Links
+        // ========================================
+        // SMOOTH SCROLL FOR NAVIGATION
+        // ========================================
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
         });
 
-        // Header Background on Scroll
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if (window.scrollY > 50) {
-                header.style.background = 'rgba(15, 17, 21, 0.98)';
-            } else {
-                header.style.background = 'rgba(15, 17, 21, 0.95)';
+        // ========================================
+        // MOBILE MENU TOGGLE
+        // ========================================
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const nav = document.querySelector('nav ul');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+            if (nav.style.display === 'flex') {
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '100%';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'rgba(3, 3, 5, 0.98)';
+                nav.style.padding = '20px';
+                nav.style.borderBottom = '1px solid var(--glass-border)';
             }
         });
-    </script>
 
+        // ========================================
+        // MOUSE PARALLAX EFFECT
+        // ========================================
+        document.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.orb');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 20;
+                orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+
+        // ========================================
+        // CONSOLE BRANDING
+        // ========================================
+        console.log('%c ZYNEX ', 'background: linear-gradient(135deg, #00f2ea, #7000ff); color: #000; font-size: 40px; font-weight: bold; padding: 20px;');
+        console.log('%c Premium Crypto Exchange Platform ', 'color: #00f2ea; font-size: 16px;');
+        console.log('%c © 2026 ZYNEX. All rights reserved. ', 'color: #6a6a7a; font-size: 12px;');
+    </script>
 </body>
 </html>
